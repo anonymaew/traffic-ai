@@ -7,7 +7,6 @@ This code is entirely written by Napat Srichan.
 
 /*
 TODO :
-spawnfunction.customize()
 lane.update()
 environment.update()
 */
@@ -28,9 +27,10 @@ class car{
 }
 
 class turnpoint{
-    constructor(position,steering){
+    constructor(position,steering,tolane){
         this.pos=position;
         this.steer=steering;
+        this.tolane=tolane;
     }
 }
 
@@ -52,8 +52,17 @@ class spawnfunction{
         this.overallprob+=probability;
     }
     customize(car){
-        var i=random(overallprob);
-        for(var ii=)
+        var i=random(this.overallprob);
+        for(var ii=0;ii<this.problist.length;ii++){
+            if(i<this.problist[ii]){
+                var prob=problist[ii];
+                car.type=prob.type;
+                car.length=prob.length;
+                car.maxsp=prob.maxsp;
+                car.acc=prob.acc;
+            }
+            i=i-problist[ii];
+        }
     } 
 }
 
@@ -63,28 +72,27 @@ class lane{
         this.finishpos=finishPosition;
         this.turnlist=turningPointArray.splice();
         this.carlist=[];
-        this.numbercar=0;
         this.startdir=finishPosition.copy().sub(startPosition).heading();
         this.flowrate=flowRateInVPH;
         this.carlastadd=0;
+        this.carcustom=0;
     }
-    update(){
-        if(this.flowrate)
+    update(time){
+        if(this.carlastadd<=time){
+            var ci=new car(this.startpos,createVector(60,0).rotate(this.startdir));
+            ci.
+            this.carlastadd+=36000/this.flowrate;
+        }
     }
 }
 
 class light{
-    constructor(position,redlightDurationList,yellowlightDurationList,greenlightDurationList){
+    constructor(position){
         this.pos=position;
-        this.redlist=redlightDurationList.splice();
-        this.yellowlist=yellowlightDurationList.splice();
-        this.greenlist=greenlightDurationList.splice();
-        this.status="";
+        this.status="red";
     }
-    update(time){
-        for(let l of this.redlist) if(time>=l[0] && time<l[1]) this.status="red";
-        for(let l of this.yellowlist) if(time>=l[0] && time<l[1]) this.status="yellow";
-        for(let l of this.greenlist) if(time>=l[0] && time<l[1]) this.status="green";
+    collisioncheck(position){
+        return (this.pos.dist(position)<2 && status=="red");
     }
 }
 
@@ -96,13 +104,13 @@ class environment{
     }
     update(speed){
         for(var sp=0;sp<speed;sp++){
-            for(let lane of lanelist){
-                if(steptime>lane.carlastadd){                                   //if it is the time to spawn a car
-                    
-                    lane.carlasadd=steptime+36000/lane.flowrate;
-                }
+            for(let light of this.lightlist){
+                //let the light thinking
             }
-            steptime++;
+            for(let lane of this.lanelist){
+                lane.update(this.steptime);
+            }
+            this.steptime++;
         }
     }
 }

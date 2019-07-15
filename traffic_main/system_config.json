@@ -1,6 +1,32 @@
 {
     "name":"default",
     "size":[1000,1000],
+    "light":[
+        {
+            "pos":[8,2]
+        },
+        {
+            "pos":[8,6]
+        },
+        {
+            "pos":[-2,8]
+        },
+        {
+            "pos":[-6,8]
+        },
+        {
+            "pos":[-8,-2]
+        },
+        {
+            "pos":[-8,-6]
+        },
+        {
+            "pos":[2,-8]
+        },
+        {
+            "pos":[6,-8]
+        }
+    ],
     "lane":[
         {
             "startpos":[500,2],
@@ -15,7 +41,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",
@@ -51,7 +77,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",
@@ -87,7 +113,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",
@@ -123,7 +149,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",
@@ -159,7 +185,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",
@@ -195,7 +221,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",
@@ -231,7 +257,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",
@@ -267,7 +293,7 @@
             "flowrate":600,
             "carcustom":{
                 "problist":[8,1,1],
-                "overallpro":10,
+                "overallprob":10,
                 "carlist":[
                     {
                         "type":"sedan",

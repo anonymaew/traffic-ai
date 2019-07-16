@@ -7,7 +7,7 @@ This code is entirely written by Napat Srichan.
 
 /*
 TODO :
-solve environment.update() bug
+connect to nn
 */
 
 class car{
@@ -23,19 +23,13 @@ class car{
         this.type="";
     }
     collisionCheck(objectPosition,objectVelocity){
-        var bool=false;
         var colvec=this.head.copy().setMag((this.sp*this.sp-objectVelocity.mag()*objectVelocity.mag())/(2*this.acc)/36+this.length+4);
-        ellipse(this.pos.copy().add(this.head.copy().setMag(colvec.mag())).x,this.pos.copy().add(this.head.copy().setMag(colvec.mag())).y,2,2);
         var obvec=objectPosition.copy().sub(this.pos);
-        /*
         //edge case
-        if(colvec.angleBetween(obvec)>=HALF_PI) bool=obvec.mag()<3;
-        else if(colvec.copy().mult(-1).angleBetween(obvec.copy().sub(colvec))>=HALF_PI) bool=obvec.copy().sub(colvec).mag()<3;
+        if(colvec.angleBetween(obvec)>=HALF_PI) return obvec.mag()<3;
+        else if(colvec.copy().mult(-1).angleBetween(obvec.copy().sub(colvec))>=HALF_PI) return obvec.copy().sub(colvec).mag()<3;
         //normal case
-        else bool=obvec.copy().sub(colvec.copy().setMag(obvec.dot(colvec)/colvec.mag())).mag()<3;
-        */
-        bool=collideLineCircle(0,0,colvec.x,colvec.y,obvec.x,obvec.y,6);
-        return bool;
+        else return obvec.copy().sub(colvec.copy().setMag(obvec.dot(colvec)/colvec.mag())).mag()<3;
     }
 }
 
@@ -44,6 +38,14 @@ class turnpoint{
         this.pos=position;
         this.steer=steering;
         this.tolane=tolane;
+    }
+}
+
+class countpoint{
+    constructor(position){
+        this.pos=position;
+        this.lastid=-1;
+        this.number=0;
     }
 }
 
@@ -84,6 +86,7 @@ class lane{
         this.flowrate=flowRateInVPH;
         this.carlastadd=0;
         this.carcustom=0;
+        this.countlist=[];
     }
     setting(s){
         for(let tl of s.turnlist) this.turnlist.push(new turnpoint(createVector(tl.pos[0],tl.pos[1]),tl.steer,tl.tolane));
@@ -91,6 +94,7 @@ class lane{
         for(let cf of s.carcustom.carlist) this.carcustom.addcar(cf,0);
         this.carcustom.problist=s.carcustom.problist;
         this.carcustom.overallprob=s.carcustom.overallprob;
+        for(let cl of s.countlist) this.countlist.push(new countpoint(createVector(cl.pos[0],cl.pos[1])));
     }
     update(time){
         //if it is the time to spawn the car
@@ -130,8 +134,9 @@ class environment{
     }
     update(speed){
         for(var sp=0;sp<speed;sp++){
-            for(let light of this.lightlist){
+            for(let ilight of this.lightlist){
                 //let the light thinking by nn?
+                this.lightlist[0].status="green";
             }
             for(var ilane=0;ilane<this.lanelist.length;ilane++){
                 var lanei=this.lanelist[ilane];
@@ -140,14 +145,19 @@ class environment{
                 //check the collision for the car
                 for(let cari of lanei.carlist) cari.collision=false;
                 //check red light
-                for(let cari of lanei.carlist) for(let ilight of this.lightlist) if(ilight.status="red") cari.collision=cari.collisionCheck(ilight.pos,createVector(0,0));
+                for(let cari of lanei.carlist) for(let ilight of this.lightlist) if(ilight.status=="red") cari.collision=cari.collision || cari.collisionCheck(ilight.pos,createVector(0,0));
                 //check the front car
                 for(var icar=lanei.carlist.length-1;icar>0;icar--){
-                    lanei.carlist[icar].collision=lanei.carlist[icar].collisionCheck(lanei.carlist[icar-1].pos,lanei.carlist[icar-1].head.copy().mult(lanei.carlist[icar-1].sp));
+                    lanei.carlist[icar].collision=lanei.carlist[icar].collision || lanei.carlist[icar].collisionCheck(lanei.carlist[icar-1].pos,lanei.carlist[icar-1].head.copy().mult(lanei.carlist[icar-1].sp));
+                }
+                //count the car
+                for(let icar of lanei.carlist) for(let ic of lanei.countlist) if(icar.pos.dist(ic.pos)<3 && ic.lastid!=icar.id){
+                    ic.number++;
+                    ic.lastid=icar.id;
                 }
                 //update the car
                 for(let cari of lanei.carlist){
-                    if(cari.collision && cari.sp>0) cari.sp-=cari.acc;
+                    if(cari.collision) cari.sp-=cari.acc;
                     else if(cari.sp<cari.maxsp) cari.sp+=cari.acc;
                     if(cari.sp<0) cari.sp=0;
                     cari.pos.add(cari.head.copy().mult(cari.sp/36));

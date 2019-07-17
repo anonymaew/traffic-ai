@@ -27,6 +27,12 @@
             "pos":[6,-10]
         }
     ],
+    "lightconfig":[
+        ["green","green","red","red","red","red","red","red"],
+        ["red","red","green","green","red","red","red","red"],
+        ["red","red","red","red","green","green","red","red"],
+        ["red","red","red","red","red","red","green","green"]
+    ],
     "lane":[
         {
             "startpos":[500,2],
@@ -53,13 +59,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },
@@ -97,13 +103,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },
@@ -141,13 +147,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },
@@ -185,13 +191,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },
@@ -229,13 +235,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },
@@ -273,13 +279,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },
@@ -317,13 +323,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },
@@ -361,13 +367,13 @@
                         "type":"truck",
                         "length":6,
                         "maxsp":80,
-                        "acc":0.4
+                        "acc":0.50
                     },
                     {
                         "type":"cargo",
                         "length":10,
                         "maxsp":90,
-                        "acc":0.3
+                        "acc":0.4
                     }
                 ]
             },

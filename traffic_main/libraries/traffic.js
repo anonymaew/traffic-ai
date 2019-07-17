@@ -2,12 +2,8 @@
 -----------------------------------------------
 This code is entirely written by Napat Srichan.
      ** Require "p5.js" library to run. **
+     ** Require "nn.js" library to run. **
 -----------------------------------------------
-*/
-
-/*
-TODO :
-connect to nn
 */
 
 class car{
@@ -23,6 +19,8 @@ class car{
         this.type="";
     }
     collisionCheck(objectPosition,objectVelocity){
+        if(objectVelocity.mag()>this.sp) return false;
+        objectVelocity.mult(0.9);
         var colvec=this.head.copy().setMag((this.sp*this.sp-objectVelocity.mag()*objectVelocity.mag())/(2*this.acc)/36+this.length+4);
         var obvec=objectPosition.copy().sub(this.pos);
         //edge case
@@ -62,16 +60,16 @@ class spawnfunction{
         this.overallprob+=probability;
     }
     customize(car){
-        var i=random(this.overallprob);
-        for(var ii=0;ii<this.problist.length;ii++){
-            if(i<this.problist[ii]){
+        var i=random(0,this.overallprob);
+        for(var ii=0;ii<this.problist.length && i>0;ii++){
+            i=i-this.problist[ii];
+            if(i<0){
                 var prob=this.carlist[ii];
                 car.type=prob.type;
                 car.length=prob.length;
                 car.maxsp=prob.maxsp;
                 car.acc=prob.acc;
             }
-            i=i-this.problist[ii];
         }
     } 
 }
@@ -80,7 +78,7 @@ class lane{
     constructor(startPosition,finishPosition,turningPointArray,flowRateInVPH){
         this.startpos=startPosition;
         this.finishpos=finishPosition;
-        this.turnlist=turningPointArray.splice();
+        this.turnlist=turningPointArray.slice();
         this.carlist=[];
         this.startdir=finishPosition.copy().sub(startPosition).heading();
         this.flowrate=flowRateInVPH;
@@ -120,6 +118,8 @@ class environment{
     constructor(){
         this.lanelist=[];
         this.lightlist=[];
+        this.brain=0;
+        this.lightconfig=[];
         this.size=0;
         this.steptime=0;    // 1 step time equals to 0.1 second
     }
@@ -131,13 +131,21 @@ class environment{
             this.lanelist.push(ilane);
         }
         for(let ilight of s.light) this.lightlist.push(new light(createVector(ilight.pos[0],ilight.pos[1])));
+        for(let ilc of s.lightconfig) this.lightconfig.push(ilc);
+        this.brain=new neuralnetwork([this.lanelist.length,5,this.lightconfig.length]);
     }
     update(speed){
         for(var sp=0;sp<speed;sp++){
-            for(let ilight of this.lightlist){
-                //let the light thinking by nn?
-                this.lightlist[0].status="green";
+            //let the light thinking by nn
+            var inp=[];
+            for(let ilane of this.lanelist) inp.push(ilane.countlist[0].number-ilane.countlist[1].number);
+            inp=this.brain.calculate(inp.slice());
+            var max=-999; var imax;
+            for(var i=0;i<this.lightconfig.length;i++) if(inp[i]>max){
+                max=inp[i]; imax=i;
             }
+            for(var i=0;i<this.lightlist.length;i++) this.lightlist[i].status=this.lightconfig[imax][i];
+            //loop each lane
             for(var ilane=0;ilane<this.lanelist.length;ilane++){
                 var lanei=this.lanelist[ilane];
                 //add or delete cars

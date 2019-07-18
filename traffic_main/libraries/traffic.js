@@ -17,6 +17,7 @@ class car{
         this.acc=0;    //in kmphpst
         this.id=parseInt(random(1000000));
         this.type="";
+        this.score=[false,100];
     }
     collisionCheck(objectPosition,objectVelocity){
         if(objectVelocity.mag()>this.sp) return false;
@@ -94,17 +95,6 @@ class lane{
         this.carcustom.overallprob=s.carcustom.overallprob;
         for(let cl of s.countlist) this.countlist.push(new countpoint(createVector(cl.pos[0],cl.pos[1])));
     }
-    update(time){
-        //if it is the time to spawn the car
-        if(this.carlastadd<=time){
-            var ci=new car(this.startpos.copy(),createVector(60,0).rotate(this.startdir));
-            this.carcustom.customize(ci);
-            this.carlist.push(ci);
-            this.carlastadd+=36000/this.flowrate;
-        }
-        //if the car reach the end of the road
-        if(this.carlist.length>0) if(this.carlist[0].pos.dist(this.finishpos)<3) this.carlist.shift();
-    }
 }
 
 class light{
@@ -122,6 +112,7 @@ class environment{
         this.lightconfig=[];
         this.size=0;
         this.steptime=0;    // 1 step time equals to 0.1 second
+        this.score=0;
     }
     setting(s){
         this.size=createVector(s.size[0],s.size[1]);
@@ -148,8 +139,18 @@ class environment{
             //loop each lane
             for(var ilane=0;ilane<this.lanelist.length;ilane++){
                 var lanei=this.lanelist[ilane];
-                //add or delete cars
-                lanei.update(this.steptime);
+                //add cars
+                if(lanei.carlastadd<this.steptime){
+                    var ci=new car(lanei.startpos.copy(),createVector(60,0).rotate(lanei.startdir));
+                    lanei.carcustom.customize(ci);
+                    lanei.carlist.push(ci);
+                    lanei.carlastadd+=36000/lanei.flowrate;
+                }
+                //delete cars
+                if(lanei.carlist.length>0) if(lanei.carlist[0].pos.dist(lanei.finishpos)<3){
+                    this.score+=lanei.carlist[0].score[1];
+                    lanei.carlist.shift();
+                }
                 //check the collision for the car
                 for(let cari of lanei.carlist) cari.collision=false;
                 //check red light
@@ -169,6 +170,15 @@ class environment{
                     else if(cari.sp<cari.maxsp) cari.sp+=cari.acc;
                     if(cari.sp<0) cari.sp=0;
                     cari.pos.add(cari.head.copy().mult(cari.sp/36));
+                    //calculate the score
+                    if(cari.sp==0){
+                        if(cari.score[0]==false){
+                            cari.score[1]-=10;
+                            cari.score[0]=true;
+                        }
+                        else cari.score[1]-=1;
+                    }
+                    else cari.score[0]=false;
                 }
             }
             this.steptime++;
@@ -204,5 +214,10 @@ class environment{
             rect(0,-1.5,icar.length,3);
             pop();
         }
+    }
+    scorenow(){
+        var iscore=this.score;
+        for(let ilane of this.lanelist) for(let icar of ilane.carlist) iscore+=icar.score[1];
+        return iscore;
     }
 }

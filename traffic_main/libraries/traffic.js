@@ -19,14 +19,15 @@ class car{
         this.type="";
         this.score=[false,100];
     }
-    collisionCheck(objectPosition,objectVelocity){
-        if(objectVelocity.mag()>this.sp) return false;
-        objectVelocity.mult(0.9);
-        var colvec=this.head.copy().setMag((this.sp*this.sp-objectVelocity.mag()*objectVelocity.mag())/(2*this.acc)/36+this.length+4);
+    collisionCheck(objectPosition,objectSpeed){
+        if(objectSpeed>this.sp) return false;
+        objectSpeed*=0.9;
+        var colvec=createVector((this.sp*this.sp-objectSpeed*objectSpeed)/(2*this.acc)/36+this.length+4,0).rotate(this.head.heading());
         var obvec=objectPosition.copy().sub(this.pos);
+        var vec=colvec.copy().sub(obvec);
         //edge case
         if(colvec.angleBetween(obvec)>=HALF_PI) return obvec.mag()<3;
-        else if(colvec.copy().mult(-1).angleBetween(obvec.copy().sub(colvec))>=HALF_PI) return obvec.copy().sub(colvec).mag()<3;
+        else if(colvec.angleBetween(vec)>=HALF_PI) return vec.mag()<3;
         //normal case
         else return obvec.copy().sub(colvec.copy().setMag(obvec.dot(colvec)/colvec.mag())).mag()<3;
     }
@@ -154,10 +155,10 @@ class environment{
                 //check the collision for the car
                 for(let cari of lanei.carlist) cari.collision=false;
                 //check red light
-                for(let cari of lanei.carlist) for(let ilight of this.lightlist) if(ilight.status=="red") cari.collision=cari.collision || cari.collisionCheck(ilight.pos,createVector(0,0));
+                for(let cari of lanei.carlist) for(let ilight of this.lightlist) if(ilight.status=="red") cari.collision=cari.collision || cari.collisionCheck(ilight.pos,0);
                 //check the front car
                 for(var icar=lanei.carlist.length-1;icar>0;icar--){
-                    lanei.carlist[icar].collision=lanei.carlist[icar].collision || lanei.carlist[icar].collisionCheck(lanei.carlist[icar-1].pos,lanei.carlist[icar-1].head.copy().mult(lanei.carlist[icar-1].sp));
+                    lanei.carlist[icar].collision=lanei.carlist[icar].collision || lanei.carlist[icar].collisionCheck(lanei.carlist[icar-1].pos,lanei.carlist[icar-1].sp);
                 }
                 //count the car
                 for(let icar of lanei.carlist) for(let ic of lanei.countlist) if(icar.pos.dist(ic.pos)<3 && ic.lastid!=icar.id){

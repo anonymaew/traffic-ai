@@ -1,13 +1,17 @@
-var envi=[],setupData,speed=1,sh=0,si=10;
+var envi=[],setupData,speed=1,sh=0,si=10,envshow,gen=0,showOption=true,result={},savefile,fileAvail=true;
 
 function preload(){
 	setupData=loadJSON("system_config.json");
+	var a=new XMLHttpRequest();
+	fileAvail=a.open('HEAD',"neural.json",false).send().status!=404;
+	if(fileAvail) savefile=loadJSON("neural.json");
 }
 
 function setup() {
 	createCanvas(480, 360, WEBGL);
 	frameRate(30);
 	strokeWeight(1);
+	if(!fileAvail) console.log("gay");
 	for(var i=0;i<si;i++){
 		var ienv=new environment();
 		ienv.setting(setupData)
@@ -18,11 +22,13 @@ function setup() {
 
 function draw(){
 	background(255);
-	var li=[]; li.push(envi[0].steptime);
 	for(var i=0;i<si;i++){
-		if(sh==i) envi[i].show();
+		//if(sh==i) envi[i].show();
 		envi[i].update(speed);
-		li.push(envi[i].scorenow());
+	}
+	if(gen>0){
+		envshow.update(speed);
+		if(showOption) envshow.show();
 	}
 	if(envi[0].steptime>1800) breed();
 }
@@ -35,25 +41,40 @@ function keyPressed(){
 function breed(){
 	var li=[];
 	for(let ie of envi) li.push(ie.scorenow());
-	var lis=[];
+	var lis=[]; var lisi=[];
 	for(let i of li) lis.push(map(i,Math.min(...li),Math.max(...li),0,1));
-	//for(var i=0;i<lis.length;i++) lis[i]*=lis[i];
-	console.log(lis);
+	for(var i=0;i<lis.length;i++) lis[i]*=lis[i];
+	console.log(Math.max(...li));
+	//console.log(lis);
 	var nenvi=[];
+	var sum=0; for(let n of lis) sum+=n;
 	for(var i=0;i<si;i++){
-		var randnum=random();
-		var min=9; var imin;
-		for(var j=0;j<lis.length;j++){
-			var num=lis[j];
-			if(num-randnum>0) if(num-randnum<min){
-				min=num-randnum; imin=j;
-			}
+		var randnum=random(sum);
+		var imin;
+		for(var j=0;j<lis.length && randnum>0;j++){
+			randnum-=lis[j];
+			if(randnum<0) imin=j;
 		}
 		var ienv=new environment();
 		ienv.setting(setupData);
 		ienv.brain=envi[imin].brain.copy();
-		ienv.brain.mutate(0.05);
+		lisi.push(imin);
+		ienv.brain.mutate(0.02);
 		nenvi.push(ienv);
 	}
+	//console.log(lisi);
+	envshow=new environment();
+	envshow.setting(setupData);
+	envshow.brain=envi[imin].brain.copy();
+	var iob={
+		"brain":envshow.brain,
+		"score":Math.max(...li)
+	}
+	result[gen]=iob;
 	envi=nenvi;
+	gen++;
+}
+
+function saveResult(){
+	saveJSON(result,"neural.json");
 }

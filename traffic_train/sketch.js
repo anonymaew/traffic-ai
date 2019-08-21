@@ -1,17 +1,13 @@
-var envi=[],setupData,speed=1,sh=0,si=10,envshow,gen=0,showOption=true,result={},savefile,fileAvail=true;
+var envi=[],setupData,speed=1,sh=0,si=100,envshow,gen=0,showOption=true,result={};
 
 function preload(){
 	setupData=loadJSON("system_config.json");
-	var a=new XMLHttpRequest();
-	fileAvail=a.open('HEAD',"neural.json",false).send().status!=404;
-	if(fileAvail) savefile=loadJSON("neural.json");
 }
 
 function setup() {
 	createCanvas(480, 360, WEBGL);
 	frameRate(30);
 	strokeWeight(1);
-	if(!fileAvail) console.log("gay");
 	for(var i=0;i<si;i++){
 		var ienv=new environment();
 		ienv.setting(setupData)
@@ -23,7 +19,7 @@ function setup() {
 function draw(){
 	background(255);
 	for(var i=0;i<si;i++){
-		//if(sh==i) envi[i].show();
+		if(sh==i) envi[i].show();
 		envi[i].update(speed);
 	}
 	if(gen>0){

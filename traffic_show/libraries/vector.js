@@ -18,24 +18,24 @@ class vector{
         return this;
     }
     mag(){
-        return sqrt(this.x*this.x+this.y*this.y);
+        return Math.sqrt(this.x*this.x+this.y*this.y);
     }
     normalize(){
         return this.setMag(1);
     }
     dist(vec){
-        return sqrt((this.x-vec.x)**2+(this.y-vec.y)**2);
+        return Math.sqrt((this.x-vec.x)**2+(this.y-vec.y)**2);
     }
     heading(){
-        return atan2(this.y,this.x);
+        return Math.atan2(this.y,this.x);
     }
     rotate(an){
         var m=this.mag(); var h=this.heading();
-        this.x=cos(h+an)*m; this.y=sin(h+an)*m;
+        this.x=Math.cos(h+an)*m; this.y=Math.sin(h+an)*m;
         return this;
     }
     angleBetween(vec){
-        return abs(this.heading(),vec.heading());
+        return Math.abs(this.heading(),vec.heading());
     }
     dot(vec){
         return this.x*vec.x+this.y*vec.y;

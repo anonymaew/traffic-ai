@@ -44,7 +44,7 @@
                 "tolane":2
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,
@@ -91,7 +91,7 @@
                 "tolane":7
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,
@@ -138,7 +138,7 @@
                 "tolane":4
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,
@@ -185,7 +185,7 @@
                 "tolane":1
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,
@@ -232,7 +232,7 @@
                 "tolane":6
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,
@@ -279,7 +279,7 @@
                 "tolane":3
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,
@@ -326,7 +326,7 @@
                 "tolane":0
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,
@@ -373,7 +373,7 @@
                 "tolane":5
                 }
             ],
-            "flowrate":1200,
+            "flowrate":600,
             "carcustom":{
                 "problist":[10,0,0],
                 "overallprob":10,

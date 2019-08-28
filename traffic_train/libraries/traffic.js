@@ -17,7 +17,7 @@ class car{
         this.acc=0;    //in kmphpst
         this.id=parseInt(random(1000000));
         this.type="";
-        this.score=[false,100];
+        this.score=[false,1000];
     }
     collisionCheck(objectPosition,objectSpeed){
         if(objectSpeed>this.sp) return false;
@@ -87,6 +87,7 @@ class lane{
         this.carlastadd=0;
         this.carcustom=0;
         this.countlist=[];
+        this.lastlight=0; //efficiency experiment
     }
     setting(s){
         for(let tl of s.turnlist) this.turnlist.push(new turnpoint(createVector(tl.pos[0],tl.pos[1]),tl.steer,tl.tolane));
@@ -131,7 +132,7 @@ class environment{
             //let the light thinking by nn
             var inp=[];
             for(let ilane of this.lanelist) inp.push(ilane.countlist[0].number-ilane.countlist[1].number);
-            inp=this.brain.calculate(inp.slice());
+            inp=this.brain.calculate(inp);
             var max=-999; var imax;
             for(var i=0;i<this.lightconfig.length;i++) if(inp[i]>max){
                 max=inp[i]; imax=i;
@@ -140,12 +141,17 @@ class environment{
             //loop each lane
             for(var ilane=0;ilane<this.lanelist.length;ilane++){
                 var lanei=this.lanelist[ilane];
+                if(this.lightlist[ilane].status!=lanei.lastlight[0]){
+                    if(lanei.lastlight[1]<50) this.score-=2500;
+                    lanei.lastlight=[this.lightlist[ilane].status,0];
+                }
+                else lanei.lastlight[1]++;
                 //add cars
                 if(lanei.carlastadd<this.steptime){
                     var ci=new car(lanei.startpos.copy(),createVector(60,0).rotate(lanei.startdir));
                     lanei.carcustom.customize(ci);
-                    lanei.carlist.push(ci);
                     lanei.carlastadd+=36000/lanei.flowrate;
+                    lanei.carlist.push(ci);
                 }
                 //delete cars
                 if(lanei.carlist.length>0) if(lanei.carlist[0].pos.dist(lanei.finishpos)<3){
@@ -164,6 +170,7 @@ class environment{
                 for(let icar of lanei.carlist) for(let ic of lanei.countlist) if(icar.pos.dist(ic.pos)<3 && ic.lastid!=icar.id){
                     ic.number++;
                     ic.lastid=icar.id;
+                    //if(ilane==0 && ic.pos.x==0) console.log(icar.score[1]);  //overhead experiment
                 }
                 //update the car
                 for(let cari of lanei.carlist){

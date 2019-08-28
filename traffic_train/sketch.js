@@ -1,4 +1,4 @@
-var envi=[],setupData,speed=1,sh=0,si=100,envshow,gen=0,showOption=true,result={};
+var envi=[],setupData,speed=8,sh=0,si=100,envshow=0,gen=0,showOption=true,result={};
 
 function preload(){
 	setupData=loadJSON("system_config.json");
@@ -26,6 +26,7 @@ function draw(){
 		envshow.update(speed);
 		if(showOption) envshow.show();
 	}
+	//envi[envshow].show();
 	if(envi[0].steptime>1800) breed();
 }
 
@@ -41,9 +42,10 @@ function breed(){
 	for(let i of li) lis.push(map(i,Math.min(...li),Math.max(...li),0,1));
 	for(var i=0;i<lis.length;i++) lis[i]*=lis[i];
 	console.log(Math.max(...li));
-	//console.log(lis);
+	console.log(lis);
 	var nenvi=[];
 	var sum=0; for(let n of lis) sum+=n;
+	//console.log(li);
 	for(var i=0;i<si;i++){
 		var randnum=random(sum);
 		var imin;
@@ -58,7 +60,7 @@ function breed(){
 		ienv.brain.mutate(0.02);
 		nenvi.push(ienv);
 	}
-	//console.log(lisi);
+	console.log(lisi);
 	envshow=new environment();
 	envshow.setting(setupData);
 	envshow.brain=envi[imin].brain.copy();
